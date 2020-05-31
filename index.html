@@ -156,7 +156,7 @@
             jsonRequest.phone = document.getElementById("phone").value;
             jsonRequest.email = document.getElementById("email").value;
             jsonRequest.dob = document.getElementById("dob").value;
-            const result = await fetch("http://localhost:3200/contact", { method:"POST" ,
+            const result = await fetch("/contact", { method:"POST" ,
             headers : { "content-type" : "application/json" }, 
             body: JSON.stringify(jsonRequest) })
             const success = await result.json();
