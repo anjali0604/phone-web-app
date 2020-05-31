@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular-route.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <title>My bestt App</title>
+    <style>
+        .mainn{
+            border: 1px solid;
+            padding: 10px;
+            box-shadow: 3px 5px #888888;
+            margin-top: 50px;
+            margin-left: 250px;
+            margin-right: 250px;
+        }
+        .collapsible {
+         background-color: rgb(158, 153, 153);
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        }
+
+        .active, .collapsible:hover {
+        background-color: #555;
+        }
+
+        .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+        }
+        .myContact{
+            text-align: center;
+        }
+         #button {
+             background-color: red;
+             color: white;
+         }
+        
+    </style>
+</head>
+<body>
+    <div class="mainn">
+        <div>
+            <nav class="navbar navbar-inverse" role="navigation" style="padding-left:130px;">
+                   <ul class="nav navbar-nav">
+                  <li class="active"><a href="/">RM-PHONEBOOK</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="myContact">
+            <h4>Add Contact:</h4>
+            <form>
+                <label for="fname">Name: </label>
+                <input type="text" id="name" placeholder="Enter Your Name"> <br/>
+    
+                <label for="lname">Phone: </label>
+                <input type="text" id="phone" placeholder="Phone Number"> <br/>
+    
+                <label for="lname">Email: </label>
+                <input type="email" id="email" placeholder="Enter Your EmailId"> <br/>
+    
+                <label for="fname">DOB: </label>
+                <input type="text" id="dob" placeholder="dd-mm-yy"><br/>
+    
+                <button type="button" class="btn btn-success" id="submit" value="submit">Submit</button>
+            </form>
+        </div>
+        <br/>
+        <ul id='olTodo'></ol>
+    </div>
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+            content.style.display = "none";
+            }   else {
+            content.style.display = "block";
+            }
+            });
+        }
+        readPractice()
+        async function readPractice() 
+        {
+            try{
+                const olTodo=document.getElementById("olTodo");
+                while(olTodo.firstChild) olTodo.removeChild(olTodo.firstChild);
+               const result = await fetch( "http://localhost:3200/contact", { method : "GET" })
+                const todos = await result.json();
+                var i=0;
+                todos.forEach(t=> {
+                    console.log(t)
+                    const li=document.createElement("button");
+                    li.setAttribute('class','collapsible');
+                    li.setAttribute('id','s')
+                    li.setAttribute('data-toggle','collapse');
+                    li.setAttribute('data-target',"p"+i);
+                    const remove=document.createElement("p"+i);
+                    remove.setAttribute('class','content');
+                    remove.setAttribute('id','button');
+                    const phone=document.createElement("p"+i);
+                    phone.setAttribute('class','content');
+                    phone.setAttribute('id','c');
+                    const email=document.createElement("p"+i);
+                    email.setAttribute('class','content');
+                    email.setAttribute('id','c');
+                    const dob=document.createElement("p"+i);
+                    dob.setAttribute('class','content');
+                    dob.setAttribute('id','c');
+                    li.textContent = t.name;
+                    phone.textContent = t.phone;
+                    email.textContent = t.email;
+                    dob.textContent = t.dob;
+                    remove.textContent="Remove";
+                    remove.name=t.name;
+                    remove.addEventListener("click", async e => {
+                        const jsonRequest = {}
+                        jsonRequest.name = e.target.name;
+                        const result = await fetch("http://localhost:3200/contact", { method:"DELETE" ,
+                        headers : { "content-type" : "application/json" }, 
+                        body: JSON.stringify(jsonRequest) })
+                        const success = await result.json();
+                        // readOutput();
+                        alert("Deleted!");
+                    })
+                    olTodo.appendChild(li);
+                    olTodo.appendChild(phone);
+                    olTodo.appendChild(email);
+                    olTodo.appendChild(dob);
+                    olTodo.appendChild(remove);
+                    i++;
+                })
+            }
+            catch(e){
+                console.log("Error reading the info.")
+            }
+            const submit = document.getElementById("submit")
+            submit.addEventListener("click", async e => {
+            const jsonRequest = {}
+            jsonRequest.name = document.getElementById("name").value;
+            jsonRequest.phone = document.getElementById("phone").value;
+            jsonRequest.email = document.getElementById("email").value;
+            jsonRequest.dob = document.getElementById("dob").value;
+            const result = await fetch("http://localhost:3200/contact", { method:"POST" ,
+            headers : { "content-type" : "application/json" }, 
+            body: JSON.stringify(jsonRequest) })
+            const success = await result.json();
+            // readOutput();
+            alert("Created!");
+        })
+
+        }
+    </script>
+</body>
+</html>
