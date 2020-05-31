@@ -51,7 +51,7 @@ app.delete("/contact", async (req, res) => {
     }
 })
 
-app.listen(3200, () => console.log("Web server is listening.. on port 3200"));
+app.listen(process.env.PORT, () => console.log("Web server is listening.. on port 3200"));
 
 start()
 
