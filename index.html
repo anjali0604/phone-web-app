@@ -100,7 +100,7 @@
             try{
                 const olTodo=document.getElementById("olTodo");
                 while(olTodo.firstChild) olTodo.removeChild(olTodo.firstChild);
-               const result = await fetch( "http://localhost:3200/contact", { method : "GET" })
+               const result = await fetch( "/contact", { method : "GET" })
                 const todos = await result.json();
                 var i=0;
                 todos.forEach(t=> {
@@ -131,7 +131,7 @@
                     remove.addEventListener("click", async e => {
                         const jsonRequest = {}
                         jsonRequest.name = e.target.name;
-                        const result = await fetch("http://localhost:3200/contact", { method:"DELETE" ,
+                        const result = await fetch("/contact", { method:"DELETE" ,
                         headers : { "content-type" : "application/json" }, 
                         body: JSON.stringify(jsonRequest) })
                         const success = await result.json();
